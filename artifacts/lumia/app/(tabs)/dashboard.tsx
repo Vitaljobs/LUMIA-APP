@@ -146,12 +146,12 @@ export default function DashboardScreen() {
               <View style={styles.previewDivider} />
               <Text style={styles.previewLabel}>Publiek Profiel Voorbeeld</Text>
               <View style={styles.previewMeters}>
-                {(["honor", "shame", "vitality", "decay"] as const).map((m) => (
+                {(["honor", "reflectie", "vitality", "decay"] as const).map((m) => (
                   <View key={m} style={styles.previewMeter}>
                     <Text style={styles.previewMeterLabel}>{m.charAt(0).toUpperCase() + m.slice(1)}</Text>
                     <Text style={[styles.previewMeterVal, {
                       color: m === "honor" ? COLORS.honor :
-                             m === "shame" ? COLORS.shame :
+                             m === "reflectie" ? COLORS.shame :
                              m === "vitality" ? COLORS.vitality :
                              COLORS.decay
                     }]}>{meters[m]}</Text>
@@ -168,7 +168,7 @@ export default function DashboardScreen() {
             { label: "Totaal XP", value: totalXP + " XP", color: COLORS.xpGold, icon: "star" },
             { label: "Vrienden", value: String(friends.length), color: COLORS.emerald, icon: "people-outline" },
             { label: "Log Items", value: String(xpLog.length), color: COLORS.silver, icon: "list-outline" },
-            { label: "Stemmen", value: "3", color: COLORS.shame, icon: "stats-chart-outline" },
+            { label: "Stemmen", value: "3", color: COLORS.silver, icon: "stats-chart-outline" },
           ].map((stat, i) => (
             <GlassPanel key={i} style={styles.statCard}>
               <Ionicons name={stat.icon as any} size={20} color={stat.color} />
@@ -208,7 +208,7 @@ export default function DashboardScreen() {
                     {
                       backgroundColor:
                         entry.category === "honor" ? COLORS.honor :
-                        entry.category === "shame" ? COLORS.shame :
+                        entry.category === "reflectie" ? COLORS.shame :
                         entry.category === "vitality" ? COLORS.vitality :
                         entry.category === "decay" ? COLORS.decay :
                         COLORS.silver,

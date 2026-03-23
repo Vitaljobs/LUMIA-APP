@@ -1,6 +1,5 @@
 import { Feather, Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   FlatList,
@@ -19,6 +18,8 @@ import { DualGlowBackground } from "@/components/DualGlowBackground";
 import { GlassPanel } from "@/components/GlassPanel";
 import { useLumia } from "@/context/LumiaContext";
 import { ChatThread, Friend } from "@/context/LumiaContext";
+
+const QUICK_XP_AMOUNTS = [5, 10, 25, 50];
 
 function FriendRequestCard({ request, onAccept, onDecline }: {
   request: { id: string; from: Friend; timestamp: number };
@@ -62,6 +63,7 @@ function FriendRequestCard({ request, onAccept, onDecline }: {
 }
 
 function ChatCard({ chat, onPress }: { chat: ChatThread; onPress: () => void }) {
+  const hasXPGift = chat.messages.some((m) => m.xpGift);
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [pressed && { opacity: 0.8 }]}>
       <GlassPanel style={styles.chatCard}>
@@ -72,11 +74,19 @@ function ChatCard({ chat, onPress }: { chat: ChatThread; onPress: () => void }) 
         <View style={styles.chatContent}>
           <View style={styles.chatHeader}>
             <Text style={styles.chatName}>{chat.friend.name}</Text>
-            {chat.messages.length > 0 && (
-              <Text style={styles.chatTime}>
-                {Math.floor((Date.now() - chat.messages[chat.messages.length - 1].timestamp) / 3600000)}u
-              </Text>
-            )}
+            <View style={styles.chatMeta}>
+              {hasXPGift && (
+                <View style={styles.xpGiftIndicator}>
+                  <Ionicons name="star" size={10} color={COLORS.xpGold} />
+                  <Text style={styles.xpGiftIndicatorText}>XP</Text>
+                </View>
+              )}
+              {chat.messages.length > 0 && (
+                <Text style={styles.chatTime}>
+                  {Math.floor((Date.now() - chat.messages[chat.messages.length - 1].timestamp) / 3600000)}u
+                </Text>
+              )}
+            </View>
           </View>
           <Text style={styles.chatLast} numberOfLines={1}>
             {chat.lastMessage ?? "Geen berichten"}
@@ -89,18 +99,22 @@ function ChatCard({ chat, onPress }: { chat: ChatThread; onPress: () => void }) 
 
 function ChatModal({ chat, onClose }: { chat: ChatThread; onClose: () => void }) {
   const [msg, setMsg] = useState("");
-  const [xpAmount, setXpAmount] = useState("");
+  const [xpAmount, setXpAmount] = useState<number | null>(null);
   const [showXP, setShowXP] = useState(false);
   const { sendMessage } = useLumia();
   const insets = useSafeAreaInsets();
 
   const handleSend = () => {
     if (!msg.trim()) return;
-    const xp = showXP && xpAmount ? parseInt(xpAmount) : undefined;
-    sendMessage(chat.id, msg.trim(), xp);
+    sendMessage(chat.id, msg.trim(), xpAmount ?? undefined);
     setMsg("");
-    setXpAmount("");
+    setXpAmount(null);
     setShowXP(false);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  };
+
+  const handleQuickXP = (amount: number) => {
+    setXpAmount(xpAmount === amount ? null : amount);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
@@ -117,7 +131,14 @@ function ChatModal({ chat, onClose }: { chat: ChatThread; onClose: () => void })
             {chat.friend.isOnline ? "• Online" : "Offline"}
           </Text>
         </View>
-        <View style={{ width: 36 }} />
+        {/* XP Gift button in header */}
+        <Pressable
+          onPress={() => { setShowXP(!showXP); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); }}
+          style={[styles.headerXPBtn, showXP && styles.headerXPBtnActive]}
+        >
+          <Ionicons name="star" size={16} color={showXP ? COLORS.xpGold : COLORS.silver} />
+          <Text style={[styles.headerXPText, showXP && { color: COLORS.xpGold }]}>Gift</Text>
+        </Pressable>
       </View>
 
       {/* Messages */}
@@ -132,7 +153,7 @@ function ChatModal({ chat, onClose }: { chat: ChatThread; onClose: () => void })
                 {m.xpGift && (
                   <View style={styles.xpGiftBadge}>
                     <Ionicons name="star" size={12} color={COLORS.xpGold} />
-                    <Text style={styles.xpGiftText}>+{m.xpGift} XP</Text>
+                    <Text style={styles.xpGiftText}>+{m.xpGift} XP gift</Text>
                   </View>
                 )}
                 <Text style={[styles.msgText, isMe && styles.msgTextMe]}>{m.text}</Text>
@@ -144,30 +165,42 @@ function ChatModal({ chat, onClose }: { chat: ChatThread; onClose: () => void })
         showsVerticalScrollIndicator={false}
       />
 
-      {/* XP gift input */}
+      {/* XP Gift Panel — prominent & easy to use */}
       {showXP && (
-        <View style={styles.xpInputRow}>
-          <Ionicons name="star" size={16} color={COLORS.xpGold} />
-          <TextInput
-            value={xpAmount}
-            onChangeText={setXpAmount}
-            placeholder="XP bedrag"
-            placeholderTextColor={COLORS.textMuted}
-            keyboardType="numeric"
-            style={styles.xpInput}
-          />
-          <Text style={styles.xpInputLabel}>XP</Text>
+        <View style={styles.xpPanel}>
+          <View style={styles.xpPanelHeader}>
+            <Ionicons name="star" size={16} color={COLORS.xpGold} />
+            <Text style={styles.xpPanelTitle}>XP Gift sturen</Text>
+            <Text style={styles.xpPanelHint}>Kies snel een bedrag</Text>
+          </View>
+          <View style={styles.quickXPRow}>
+            {QUICK_XP_AMOUNTS.map((amt) => (
+              <Pressable
+                key={amt}
+                onPress={() => handleQuickXP(amt)}
+                style={({ pressed }) => [
+                  styles.quickXPBtn,
+                  xpAmount === amt && styles.quickXPBtnActive,
+                  pressed && { opacity: 0.8 },
+                ]}
+              >
+                <Text style={[styles.quickXPText, xpAmount === amt && { color: COLORS.xpGold }]}>
+                  ⭐ {amt}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+          {xpAmount !== null && (
+            <View style={styles.xpSelectedRow}>
+              <Ionicons name="checkmark-circle" size={14} color={COLORS.xpGold} />
+              <Text style={styles.xpSelectedText}>{xpAmount} XP wordt toegevoegd aan je bericht</Text>
+            </View>
+          )}
         </View>
       )}
 
       {/* Input area */}
       <View style={styles.inputArea}>
-        <Pressable
-          onPress={() => { setShowXP(!showXP); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
-          style={[styles.xpToggleBtn, showXP && styles.xpToggleBtnActive]}
-        >
-          <Ionicons name="star-outline" size={18} color={showXP ? COLORS.xpGold : COLORS.silver} />
-        </Pressable>
         <TextInput
           value={msg}
           onChangeText={setMsg}
@@ -179,9 +212,20 @@ function ChatModal({ chat, onClose }: { chat: ChatThread; onClose: () => void })
         <Pressable
           onPress={handleSend}
           disabled={!msg.trim()}
-          style={[styles.sendBtn, !msg.trim() && { opacity: 0.4 }]}
+          style={[
+            styles.sendBtn,
+            !msg.trim() && { opacity: 0.4 },
+            xpAmount !== null && styles.sendBtnXP,
+          ]}
         >
-          <Ionicons name="send" size={18} color={COLORS.emerald} />
+          {xpAmount !== null ? (
+            <View style={{ alignItems: "center" }}>
+              <Ionicons name="star" size={14} color={COLORS.xpGold} />
+              <Text style={styles.sendBtnXPLabel}>{xpAmount}</Text>
+            </View>
+          ) : (
+            <Ionicons name="send" size={18} color={COLORS.emerald} />
+          )}
         </Pressable>
       </View>
     </View>
@@ -297,11 +341,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: COLORS.bg,
   },
-  requestName: {
-    color: COLORS.textPrimary,
-    fontFamily: "SpaceGrotesk_600SemiBold",
-    fontSize: 14,
-  },
+  requestName: { color: COLORS.textPrimary, fontFamily: "SpaceGrotesk_600SemiBold", fontSize: 14 },
   requestStats: { flexDirection: "row", alignItems: "center", gap: 3, marginTop: 2 },
   requestStat: { color: COLORS.textMuted, fontFamily: "Outfit_400Regular", fontSize: 11 },
   requestActions: { flexDirection: "row", alignItems: "center", gap: 8 },
@@ -327,27 +367,30 @@ const styles = StyleSheet.create({
     borderColor: COLORS.emeraldBorder,
   },
   acceptText: { color: COLORS.emerald, fontFamily: "Outfit_600SemiBold", fontSize: 13 },
-  chatCard: {
-    padding: 14,
-    marginBottom: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
+  chatCard: { padding: 14, marginBottom: 8, flexDirection: "row", alignItems: "center", gap: 12 },
   chatAvatar: { width: 44, height: 44, position: "relative" },
   chatAvatarEmoji: { fontSize: 30 },
   chatContent: { flex: 1 },
   chatHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   chatName: { color: COLORS.textPrimary, fontFamily: "SpaceGrotesk_600SemiBold", fontSize: 14 },
+  chatMeta: { flexDirection: "row", alignItems: "center", gap: 6 },
+  xpGiftIndicator: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
+    backgroundColor: "rgba(255,215,0,0.12)",
+    borderRadius: 6,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    borderWidth: 1,
+    borderColor: "rgba(255,215,0,0.25)",
+  },
+  xpGiftIndicatorText: { color: COLORS.xpGold, fontFamily: "Outfit_600SemiBold", fontSize: 9 },
   chatTime: { color: COLORS.textMuted, fontFamily: "Outfit_400Regular", fontSize: 11 },
   chatLast: { color: COLORS.textMuted, fontFamily: "Outfit_400Regular", fontSize: 12, marginTop: 2 },
   empty: { alignItems: "center", gap: 12, marginTop: 40 },
   emptyText: { color: COLORS.textMuted, fontFamily: "Outfit_400Regular", fontSize: 14 },
-  // Chat modal styles
-  chatModal: {
-    flex: 1,
-    backgroundColor: "transparent",
-  },
+  chatModal: { flex: 1, backgroundColor: "transparent" },
   chatModalHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -361,15 +404,26 @@ const styles = StyleSheet.create({
   backBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   chatModalName: { color: COLORS.textPrimary, fontFamily: "SpaceGrotesk_700Bold", fontSize: 16 },
   chatModalStatus: { color: COLORS.emerald, fontFamily: "Outfit_400Regular", fontSize: 11 },
+  headerXPBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+    backgroundColor: "rgba(192,200,216,0.08)",
+    borderWidth: 1,
+    borderColor: COLORS.silverBorder,
+  },
+  headerXPBtnActive: {
+    backgroundColor: "rgba(255,215,0,0.12)",
+    borderColor: "rgba(255,215,0,0.35)",
+  },
+  headerXPText: { color: COLORS.silver, fontFamily: "Outfit_600SemiBold", fontSize: 13 },
   msgList: { paddingHorizontal: 16, paddingVertical: 16, gap: 10 },
   msgRow: { flexDirection: "row", justifyContent: "flex-start" },
   msgRowMe: { justifyContent: "flex-end" },
-  msgBubble: {
-    maxWidth: "78%",
-    padding: 12,
-    borderRadius: 16,
-    borderWidth: 1,
-  },
+  msgBubble: { maxWidth: "78%", padding: 12, borderRadius: 16, borderWidth: 1 },
   msgBubbleThem: {
     backgroundColor: "rgba(255,255,255,0.05)",
     borderColor: COLORS.silverBorder,
@@ -396,6 +450,35 @@ const styles = StyleSheet.create({
   xpGiftText: { color: COLORS.xpGold, fontFamily: "SpaceGrotesk_600SemiBold", fontSize: 12 },
   msgText: { color: COLORS.textSecondary, fontFamily: "Outfit_400Regular", fontSize: 14, lineHeight: 20 },
   msgTextMe: { color: COLORS.textPrimary },
+  // XP Gift panel
+  xpPanel: {
+    marginHorizontal: 16,
+    marginBottom: 8,
+    padding: 14,
+    borderRadius: 14,
+    backgroundColor: "rgba(255,215,0,0.05)",
+    borderWidth: 1,
+    borderColor: "rgba(255,215,0,0.2)",
+  },
+  xpPanelHeader: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 10 },
+  xpPanelTitle: { color: COLORS.xpGold, fontFamily: "SpaceGrotesk_600SemiBold", fontSize: 13, flex: 1 },
+  xpPanelHint: { color: COLORS.textMuted, fontFamily: "Outfit_400Regular", fontSize: 11 },
+  quickXPRow: { flexDirection: "row", gap: 8, flexWrap: "wrap" },
+  quickXPBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: "rgba(255,215,0,0.07)",
+    borderWidth: 1,
+    borderColor: "rgba(255,215,0,0.2)",
+  },
+  quickXPBtnActive: {
+    backgroundColor: "rgba(255,215,0,0.18)",
+    borderColor: COLORS.xpGold,
+  },
+  quickXPText: { color: COLORS.textSecondary, fontFamily: "SpaceGrotesk_600SemiBold", fontSize: 13 },
+  xpSelectedRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 8 },
+  xpSelectedText: { color: COLORS.xpGold, fontFamily: "Outfit_400Regular", fontSize: 12 },
   inputArea: {
     flexDirection: "row",
     alignItems: "flex-end",
@@ -404,38 +487,6 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: COLORS.silverBorder,
-  },
-  xpInputRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    backgroundColor: "rgba(255,215,0,0.06)",
-    borderTopWidth: 1,
-    borderTopColor: "rgba(255,215,0,0.15)",
-  },
-  xpInput: {
-    flex: 1,
-    color: COLORS.textPrimary,
-    fontFamily: "SpaceGrotesk_600SemiBold",
-    fontSize: 15,
-    paddingVertical: 8,
-  },
-  xpInputLabel: { color: COLORS.xpGold, fontFamily: "SpaceGrotesk_600SemiBold", fontSize: 13 },
-  xpToggleBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(192,200,216,0.08)",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: COLORS.silverBorder,
-  },
-  xpToggleBtnActive: {
-    backgroundColor: "rgba(255,215,0,0.08)",
-    borderColor: "rgba(255,215,0,0.3)",
   },
   msgInput: {
     flex: 1,
@@ -451,13 +502,18 @@ const styles = StyleSheet.create({
     maxHeight: 120,
   },
   sendBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: "rgba(0,224,122,0.12)",
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
     borderColor: COLORS.emeraldBorder,
   },
+  sendBtnXP: {
+    backgroundColor: "rgba(255,215,0,0.15)",
+    borderColor: "rgba(255,215,0,0.4)",
+  },
+  sendBtnXPLabel: { color: COLORS.xpGold, fontFamily: "SpaceGrotesk_700Bold", fontSize: 10, marginTop: -2 },
 });

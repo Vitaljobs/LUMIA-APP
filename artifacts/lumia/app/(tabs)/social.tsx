@@ -17,13 +17,43 @@ import { GlassPanel } from "@/components/GlassPanel";
 import { useLumia } from "@/context/LumiaContext";
 import { Statement } from "@/context/LumiaContext";
 
+function TrustGravityBadge({ weight, visible }: { weight: number; visible: boolean }) {
+  if (!visible) return null;
+  const pct = Math.round(weight * 100);
+  const color = pct >= 70 ? COLORS.emerald : pct >= 40 ? COLORS.xpGold : COLORS.decay;
+  return (
+    <View style={[trustStyles.badge, { borderColor: color + "40", backgroundColor: color + "12" }]}>
+      <Ionicons name="shield-checkmark" size={11} color={color} />
+      <Text style={[trustStyles.label, { color }]}>Trust-Gravity {weight.toFixed(2)}x</Text>
+    </View>
+  );
+}
+
+const trustStyles = StyleSheet.create({
+  badge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignSelf: "flex-start",
+    marginBottom: 10,
+  },
+  label: { fontFamily: "Outfit_500Medium", fontSize: 11 },
+});
+
 function StatementCard({ statement }: { statement: Statement }) {
-  const { voteOnStatement } = useLumia();
+  const { voteOnStatement, getTrustGravityWeight, user } = useLumia();
+  const [hovering, setHovering] = useState(false);
   const totalVotes = statement.votes.reduce((a, b) => a + b, 0);
+  const myWeight = getTrustGravityWeight(user.id);
+  const hasVoted = statement.myVote !== undefined;
 
   return (
     <GlassPanel style={styles.statementCard}>
-      {/* Author */}
+      {/* Author row */}
       <View style={styles.statementHeader}>
         <View style={styles.authorRow}>
           <View style={styles.anonAvatar}>
@@ -48,13 +78,17 @@ function StatementCard({ statement }: { statement: Statement }) {
       {/* Statement text */}
       <Text style={styles.statementText}>{statement.text}</Text>
 
+      {/* Trust-Gravity indicator — shown when not yet voted */}
+      {!hasVoted && (
+        <TrustGravityBadge weight={myWeight} visible />
+      )}
+
       {/* Vote options */}
       <View style={styles.optionsCol}>
         {statement.options.map((opt, idx) => {
           const votes = statement.votes[idx];
           const pct = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
           const isSelected = statement.myVote === idx;
-          const hasVoted = statement.myVote !== undefined;
 
           return (
             <Pressable
@@ -65,6 +99,8 @@ function StatementCard({ statement }: { statement: Statement }) {
                   voteOnStatement(statement.id, idx);
                 }
               }}
+              onHoverIn={() => setHovering(true)}
+              onHoverOut={() => setHovering(false)}
               style={({ pressed }) => [
                 styles.optionBtn,
                 isSelected && styles.optionSelected,
@@ -72,14 +108,19 @@ function StatementCard({ statement }: { statement: Statement }) {
               ]}
             >
               <View style={styles.optionContent}>
-                <Text
-                  style={[
-                    styles.optionText,
-                    isSelected && { color: COLORS.emerald },
-                  ]}
-                >
-                  {opt}
-                </Text>
+                <View style={styles.optionLeft}>
+                  {isSelected && (
+                    <Ionicons name="checkmark-circle" size={14} color={COLORS.emerald} style={{ marginRight: 6 }} />
+                  )}
+                  <Text
+                    style={[
+                      styles.optionText,
+                      isSelected && { color: COLORS.emerald },
+                    ]}
+                  >
+                    {opt}
+                  </Text>
+                </View>
                 {hasVoted && (
                   <Text style={styles.optionPct}>{pct}%</Text>
                 )}
@@ -90,7 +131,7 @@ function StatementCard({ statement }: { statement: Statement }) {
                     style={[
                       styles.optionBarFill,
                       {
-                        width: `${pct}%`,
+                        width: `${pct}%` as any,
                         backgroundColor: isSelected ? COLORS.emerald : "rgba(192,200,216,0.3)",
                       },
                     ]}
@@ -106,6 +147,13 @@ function StatementCard({ statement }: { statement: Statement }) {
       <View style={styles.statementFooter}>
         <Ionicons name="stats-chart-outline" size={12} color={COLORS.textMuted} />
         <Text style={styles.voteCount}>{totalVotes} stemmen</Text>
+        {hasVoted && (
+          <>
+            <Text style={styles.footerDot}>·</Text>
+            <Ionicons name="shield-checkmark" size={11} color={COLORS.emerald} />
+            <Text style={styles.footerTrust}>{myWeight.toFixed(2)}x gewicht</Text>
+          </>
+        )}
       </View>
     </GlassPanel>
   );
@@ -179,10 +227,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  statementCard: {
-    padding: 16,
-    marginBottom: 12,
-  },
+  statementCard: { padding: 16, marginBottom: 12 },
   statementHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -198,11 +243,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  authorName: {
-    color: COLORS.textSecondary,
-    fontFamily: "Outfit_500Medium",
-    fontSize: 13,
-  },
+  authorName: { color: COLORS.textSecondary, fontFamily: "Outfit_500Medium", fontSize: 13 },
   anonBadge: {
     backgroundColor: "rgba(168,85,247,0.12)",
     borderRadius: 6,
@@ -238,24 +279,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 12,
   },
-  optionText: {
-    color: COLORS.textSecondary,
-    fontFamily: "Outfit_400Regular",
-    fontSize: 13,
-  },
-  optionPct: {
-    color: COLORS.textMuted,
-    fontFamily: "SpaceGrotesk_600SemiBold",
-    fontSize: 12,
-  },
-  optionBarTrack: {
-    height: 3,
-    backgroundColor: "rgba(255,255,255,0.06)",
-  },
-  optionBarFill: {
-    height: "100%",
-    borderRadius: 2,
-  },
-  statementFooter: { flexDirection: "row", alignItems: "center", gap: 5 },
+  optionLeft: { flexDirection: "row", alignItems: "center", flex: 1 },
+  optionText: { color: COLORS.textSecondary, fontFamily: "Outfit_400Regular", fontSize: 13, flex: 1 },
+  optionPct: { color: COLORS.textMuted, fontFamily: "SpaceGrotesk_600SemiBold", fontSize: 12 },
+  optionBarTrack: { height: 3, backgroundColor: "rgba(255,255,255,0.06)" },
+  optionBarFill: { height: "100%" as any, borderRadius: 2 },
+  statementFooter: { flexDirection: "row", alignItems: "center", gap: 4 },
   voteCount: { color: COLORS.textMuted, fontFamily: "Outfit_400Regular", fontSize: 11 },
+  footerDot: { color: COLORS.textMuted, fontSize: 11 },
+  footerTrust: { color: COLORS.emerald, fontFamily: "Outfit_500Medium", fontSize: 11 },
 });

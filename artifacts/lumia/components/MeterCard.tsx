@@ -7,7 +7,7 @@ import Svg, { Circle } from "react-native-svg";
 import { COLORS } from "@/constants/colors";
 import { GlassPanel } from "./GlassPanel";
 
-type MeterType = "honor" | "shame" | "vitality" | "decay";
+export type MeterType = "honor" | "reflectie" | "vitality" | "decay";
 
 const METER_CONFIG: Record<MeterType, {
   label: string;
@@ -18,7 +18,7 @@ const METER_CONFIG: Record<MeterType, {
   iconSet: "ionicons" | "feather";
 }> = {
   honor: { label: "Honor", subtitle: "Integriteit", color: COLORS.honor, glow: COLORS.honorGlow, icon: "shield", iconSet: "ionicons" },
-  shame: { label: "Shame", subtitle: "Waarschuwing", color: COLORS.shame, glow: COLORS.shameGlow, icon: "alert-circle", iconSet: "feather" },
+  reflectie: { label: "Reflectie", subtitle: "Bewustzijn", color: COLORS.shame, glow: COLORS.shameGlow, icon: "refresh-circle", iconSet: "ionicons" },
   vitality: { label: "Vitality", subtitle: "Energie", color: COLORS.vitality, glow: COLORS.vitalityGlow, icon: "heart", iconSet: "ionicons" },
   decay: { label: "Decay", subtitle: "Risico", color: COLORS.decay, glow: COLORS.decayGlow, icon: "flame", iconSet: "ionicons" },
 };
@@ -59,7 +59,7 @@ export function MeterCard({ type, value }: Props) {
       onPress={handlePress}
       style={({ pressed }) => [styles.wrapper, pressed && { opacity: 0.85, transform: [{ scale: 0.97 }] }]}
     >
-      <GlassPanel variant={type} style={styles.card}>
+      <GlassPanel variant={type === "reflectie" ? "shame" : type} style={styles.card}>
         {/* Header row */}
         <View style={styles.header}>
           {config.iconSet === "ionicons" ? (
@@ -77,7 +77,6 @@ export function MeterCard({ type, value }: Props) {
             {value}
           </Text>
           <Svg width={SIZE} height={SIZE} style={{ marginLeft: 8 }}>
-            {/* Background track */}
             <Circle
               cx={SIZE / 2}
               cy={SIZE / 2}
@@ -86,7 +85,6 @@ export function MeterCard({ type, value }: Props) {
               strokeWidth={STROKE}
               fill="none"
             />
-            {/* Progress arc */}
             <Circle
               cx={SIZE / 2}
               cy={SIZE / 2}
@@ -113,22 +111,10 @@ export function MeterCard({ type, value }: Props) {
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    width: "48%",
-    marginBottom: 12,
-  },
-  card: {
-    padding: 14,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  label: {
-    color: COLORS.textPrimary,
-    fontSize: 13,
-  },
+  wrapper: { width: "48%", marginBottom: 12 },
+  card: { padding: 14 },
+  header: { flexDirection: "row", alignItems: "center", gap: 6 },
+  label: { color: COLORS.textPrimary, fontSize: 13 },
   subtitle: {
     color: COLORS.textMuted,
     fontSize: 11,
@@ -136,28 +122,9 @@ const styles = StyleSheet.create({
     marginTop: 2,
     marginBottom: 8,
   },
-  valueRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  value: {
-    fontSize: 36,
-    lineHeight: 40,
-  },
-  liveRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    marginTop: 10,
-  },
-  liveDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-  liveText: {
-    fontSize: 10,
-    fontFamily: "Outfit_400Regular",
-  },
+  valueRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  value: { fontSize: 36, lineHeight: 40 },
+  liveRow: { flexDirection: "row", alignItems: "center", gap: 5, marginTop: 10 },
+  liveDot: { width: 6, height: 6, borderRadius: 3 },
+  liveText: { fontSize: 10, fontFamily: "Outfit_400Regular" },
 });

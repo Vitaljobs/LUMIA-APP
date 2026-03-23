@@ -12,7 +12,7 @@ import {
   useFonts as useOutfit,
 } from "@expo-google-fonts/outfit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -21,21 +21,36 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { LumiaProvider } from "@/context/LumiaContext";
+import { LumiaProvider, useLumia } from "@/context/LumiaContext";
 
 SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
 
+function OnboardingGate({ children }: { children: React.ReactNode }) {
+  const { hasCompletedOnboarding } = useLumia();
+
+  useEffect(() => {
+    if (!hasCompletedOnboarding) {
+      router.replace("/onboarding");
+    }
+  }, [hasCompletedOnboarding]);
+
+  return <>{children}</>;
+}
+
 function RootLayoutNav() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="profile/[id]" options={{ presentation: "card" }} />
-      <Stack.Screen name="statement/create" options={{ presentation: "modal" }} />
-      <Stack.Screen name="transparency/[meter]" options={{ presentation: "modal" }} />
-      <Stack.Screen name="admin" options={{ presentation: "card" }} />
-    </Stack>
+    <OnboardingGate>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="onboarding" options={{ headerShown: false, animation: "fade" }} />
+        <Stack.Screen name="profile/[id]" options={{ presentation: "card" }} />
+        <Stack.Screen name="statement/create" options={{ presentation: "modal" }} />
+        <Stack.Screen name="transparency/[meter]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="admin" options={{ presentation: "card" }} />
+      </Stack>
+    </OnboardingGate>
   );
 }
 

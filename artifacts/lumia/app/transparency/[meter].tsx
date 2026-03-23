@@ -37,14 +37,25 @@ const METER_META: Record<string, {
     ],
   },
   shame: {
-    label: "Shame",
-    subtitle: "Waarschuwing Score",
-    description: "Shame registreert negatieve acties zoals het intrekken van reacties of het breken van beloftes. Hoge Shame vermindert je stemgewicht.",
+    label: "Reflectie",
+    subtitle: "Bewustzijn Score",
+    description: "Reflectie registreert momenten van zelfinzicht en het corrigeren van gedrag. Hoge Reflectie toont bewustzijn en groei.",
     color: COLORS.shame,
     glow: COLORS.shameGlow,
     breakdown: [
-      { label: "Reacties ingetrokken", value: 8, note: "-8 XP" },
-      { label: "Beloftes verbroken", value: 5, note: "-5 XP" },
+      { label: "Zelfreflectie momenten", value: 8, note: "+8 XP" },
+      { label: "Gedrag gecorrigeerd", value: 5, note: "+5 XP" },
+    ],
+  },
+  reflectie: {
+    label: "Reflectie",
+    subtitle: "Bewustzijn Score",
+    description: "Reflectie registreert momenten van zelfinzicht en het corrigeren van gedrag. Hoge Reflectie toont bewustzijn en groei — een teken van ware integriteit.",
+    color: COLORS.shame,
+    glow: COLORS.shameGlow,
+    breakdown: [
+      { label: "Zelfreflectie momenten", value: 8, note: "+8 XP" },
+      { label: "Gedrag gecorrigeerd", value: 5, note: "+5 XP" },
     ],
   },
   vitality: {

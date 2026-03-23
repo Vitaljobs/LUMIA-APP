@@ -5,9 +5,36 @@ import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 import { SymbolView } from "expo-symbols";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { COLORS } from "@/constants/colors";
+import { useLumia } from "@/context/LumiaContext";
+
+function NotifBadge({ count }: { count: number }) {
+  if (count === 0) return null;
+  return (
+    <View
+      style={{
+        position: "absolute",
+        top: -4,
+        right: -8,
+        minWidth: 16,
+        height: 16,
+        borderRadius: 8,
+        backgroundColor: COLORS.decay,
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 3,
+        borderWidth: 1.5,
+        borderColor: COLORS.bg,
+      }}
+    >
+      <Text style={{ color: "#fff", fontSize: 9, fontFamily: "SpaceGrotesk_700Bold" }}>
+        {count > 9 ? "9+" : count}
+      </Text>
+    </View>
+  );
+}
 
 function NativeTabLayout() {
   return (
@@ -24,6 +51,10 @@ function NativeTabLayout() {
         <Icon sf={{ default: "envelope", selected: "envelope.fill" }} />
         <Label>Inbox</Label>
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="notifications">
+        <Icon sf={{ default: "bell", selected: "bell.fill" }} />
+        <Label>Meldingen</Label>
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="dashboard">
         <Icon sf={{ default: "chart.bar", selected: "chart.bar.fill" }} />
         <Label>Dashboard</Label>
@@ -36,6 +67,7 @@ function ClassicTabLayout() {
   const isIOS = Platform.OS === "ios";
   const isWeb = Platform.OS === "web";
   const insets = useSafeAreaInsets();
+  const { unreadNotifCount } = useLumia();
 
   return (
     <Tabs
@@ -54,11 +86,7 @@ function ClassicTabLayout() {
         },
         tabBarBackground: () =>
           isIOS ? (
-            <BlurView
-              intensity={80}
-              tint="dark"
-              style={StyleSheet.absoluteFill}
-            />
+            <BlurView intensity={80} tint="dark" style={StyleSheet.absoluteFill} />
           ) : isWeb ? (
             <View
               style={[
@@ -103,6 +131,22 @@ function ClassicTabLayout() {
             ) : (
               <Feather name="mail" size={22} color={color} />
             ),
+        }}
+      />
+      <Tabs.Screen
+        name="notifications"
+        options={{
+          title: "Meldingen",
+          tabBarIcon: ({ color }) => (
+            <View style={{ position: "relative" }}>
+              {isIOS ? (
+                <SymbolView name="bell" tintColor={color} size={22} />
+              ) : (
+                <Ionicons name="notifications-outline" size={22} color={color} />
+              )}
+              <NotifBadge count={unreadNotifCount} />
+            </View>
+          ),
         }}
       />
       <Tabs.Screen

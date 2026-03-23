@@ -82,7 +82,7 @@ export default function HomeScreen() {
         <Text style={styles.sectionTitle}>Trust Meters</Text>
         <View style={styles.metersGrid}>
           <MeterCard type="honor" value={meters.honor} />
-          <MeterCard type="shame" value={meters.shame} />
+          <MeterCard type="reflectie" value={meters.reflectie} />
           <MeterCard type="vitality" value={meters.vitality} />
           <MeterCard type="decay" value={meters.decay} />
         </View>
@@ -105,7 +105,7 @@ export default function HomeScreen() {
                     {
                       backgroundColor:
                         entry.category === "honor" ? COLORS.honor :
-                        entry.category === "shame" ? COLORS.shame :
+                        entry.category === "reflectie" ? COLORS.shame :
                         entry.category === "vitality" ? COLORS.vitality :
                         entry.category === "decay" ? COLORS.decay :
                         COLORS.silver,

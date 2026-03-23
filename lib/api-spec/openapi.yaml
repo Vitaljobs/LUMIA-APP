@@ -1,6 +1,5 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
   description: API specification
@@ -10,13 +9,14 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: lumia
+    description: Lumia 2026 trust platform endpoints
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +24,164 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /lumia/meters/{userId}:
+    get:
+      operationId: getLumiaMeters
+      tags: [lumia]
+      summary: Get user trust meters
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Meters data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LumiaMeters"
+
+  /lumia/statements:
+    get:
+      operationId: getLumiaStatements
+      tags: [lumia]
+      summary: Get all statements for LUMIA_2026
+      responses:
+        "200":
+          description: List of statements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LumiaStatement"
+    post:
+      operationId: createLumiaStatement
+      tags: [lumia]
+      summary: Create a new statement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateStatementBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LumiaStatement"
+
+  /lumia/statements/{id}/vote:
+    post:
+      operationId: voteOnStatement
+      tags: [lumia]
+      summary: Vote on a statement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VoteBody"
+      responses:
+        "200":
+          description: Vote recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VoteResult"
+
+  /lumia/xp-log/{userId}:
+    get:
+      operationId: getLumiaXPLog
+      tags: [lumia]
+      summary: Get XP log for a user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: XP log entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/XPLogEntry"
+    post:
+      operationId: addLumiaXPEntry
+      tags: [lumia]
+      summary: Add an XP log entry
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddXPBody"
+      responses:
+        "201":
+          description: Entry added
+
+  /lumia/notifications/{userId}:
+    get:
+      operationId: getLumiaNotifications
+      tags: [lumia]
+      summary: Get notifications for a user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Notifications list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LumiaNotification"
+
+  /lumia/notifications/{userId}/{notifId}/read:
+    patch:
+      operationId: markNotificationRead
+      tags: [lumia]
+      summary: Mark a notification as read
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: notifId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Marked as read
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +192,182 @@ components:
       required:
         - status
 
+    LumiaMeters:
+      type: object
+      properties:
+        user_id:
+          type: string
+        project_id:
+          type: string
+        honor:
+          type: number
+        reflectie:
+          type: number
+        vitality:
+          type: number
+        decay:
+          type: number
+      required:
+        - user_id
+        - project_id
+        - honor
+        - reflectie
+        - vitality
+        - decay
+
+    LumiaStatement:
+      type: object
+      properties:
+        id:
+          type: string
+        project_id:
+          type: string
+        text:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+        votes:
+          type: array
+          items:
+            type: number
+        author:
+          type: string
+        author_id:
+          type: string
+        anonymous:
+          type: boolean
+        link:
+          type: string
+        created_at:
+          type: string
+      required:
+        - id
+        - project_id
+        - text
+        - options
+        - votes
+        - author
+        - author_id
+        - anonymous
+
+    CreateStatementBody:
+      type: object
+      properties:
+        text:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+        author:
+          type: string
+        author_id:
+          type: string
+        anonymous:
+          type: boolean
+        link:
+          type: string
+      required:
+        - text
+        - options
+        - author
+        - author_id
+        - anonymous
+
+    VoteBody:
+      type: object
+      properties:
+        user_id:
+          type: string
+        option_index:
+          type: number
+        trust_weight:
+          type: number
+      required:
+        - user_id
+        - option_index
+        - trust_weight
+
+    VoteResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        new_votes:
+          type: array
+          items:
+            type: number
+      required:
+        - success
+        - new_votes
+
+    XPLogEntry:
+      type: object
+      properties:
+        id:
+          type: string
+        project_id:
+          type: string
+        user_id:
+          type: string
+        action:
+          type: string
+        xp:
+          type: number
+        category:
+          type: string
+        created_at:
+          type: string
+      required:
+        - id
+        - project_id
+        - user_id
+        - action
+        - xp
+        - category
+
+    AddXPBody:
+      type: object
+      properties:
+        action:
+          type: string
+        xp:
+          type: number
+        category:
+          type: string
+      required:
+        - action
+        - xp
+        - category
+
+    LumiaNotification:
+      type: object
+      properties:
+        id:
+          type: string
+        project_id:
+          type: string
+        user_id:
+          type: string
+        type:
+          type: string
+        title:
+          type: string
+        body:
+          type: string
+        read:
+          type: boolean
+        data:
+          type: object
+        created_at:
+          type: string
+      required:
+        - id
+        - project_id
+        - user_id
+        - type
+        - title
+        - body
+        - read

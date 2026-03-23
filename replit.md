@@ -91,6 +91,24 @@ Generated Zod schemas from the OpenAPI spec (e.g. `HealthCheckResponse`). Used b
 
 Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHealthCheck`, `healthCheck`).
 
+### `artifacts/lumia` (`@workspace/lumia`)
+
+Expo React Native mobile app — **Lumia 2026 Elite Trust Platform**.
+
+- **Design**: #0a0a0a bg, Dual Glow Aurora (silver-white top, emerald green bottom), glassmorphism panels
+- **Fonts**: SpaceGrotesk_700Bold/600SemiBold/400Regular (headings) + Outfit_400Regular/500Medium/600SemiBold (body)
+- **Context**: `context/LumiaContext.tsx` — all state, mock data, Trust-Gravity logic
+- **Database**: Insforge (shared multi-project DB, filtered by `project_id = 'LUMIA_2026'`). Service layer in `services/insforge.ts`. Backend proxies calls via API server (`src/routes/lumia.ts` using `INSFORGE_URL` + `INSFORGE_API_KEY`).
+- **Tabs**: Home (meters + garden + XP log), Social (stellingen voting), Inbox (chat + XP gifting), Notifications, Dashboard
+- **Screens**: `/onboarding` (4-step intro, saved to AsyncStorage), `/transparency/[meter]`, `/statement/create`, `/admin`, `/profile/[id]`
+- **Trust Meters**: Honor (gold), Reflectie (purple, was Shame), Vitality (emerald), Decay (red) — all with animated SVG progress rings
+- **Trust-Gravity**: Vote weight = honor/100, shown live before/after voting on stellingen
+- **XP Gifting**: Quick-amount panel (5/10/25/50 XP) in chat, header Gift button, XP indicator in chat list
+- **Notifications**: Full notification center with badge counts, unread indicators, mark-all-read
+- **Onboarding**: 4-step animated intro shown on first launch (AsyncStorage gate)
+- **Admin**: Only user `LUMIA_ADMIN_001` sees admin tab
+- **DB Table prefix**: `lumia_` — all tables: `lumia_meters`, `lumia_statements`, `lumia_statement_votes`, `lumia_xp_log`, `lumia_notifications`, `lumia_friends`, `lumia_friend_requests`, `lumia_messages`
+
 ### `scripts` (`@workspace/scripts`)
 
 Utility scripts package. Each script is a `.ts` file in `src/` with a corresponding npm script in `package.json`. Run scripts via `pnpm --filter @workspace/scripts run <script>`. Scripts can import any workspace package (e.g., `@workspace/db`) by adding it as a dependency in `scripts/package.json`.
