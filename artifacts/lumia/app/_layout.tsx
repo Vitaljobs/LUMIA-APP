@@ -49,6 +49,11 @@ function RootLayoutNav() {
         <Stack.Screen name="statement/create" options={{ presentation: "modal" }} />
         <Stack.Screen name="transparency/[meter]" options={{ presentation: "modal" }} />
         <Stack.Screen name="admin" options={{ presentation: "card" }} />
+        <Stack.Screen name="settings" options={{ presentation: "card" }} />
+        <Stack.Screen name="help" options={{ presentation: "card" }} />
+        <Stack.Screen name="privacy" options={{ presentation: "card" }} />
+        <Stack.Screen name="terms" options={{ presentation: "card" }} />
+        <Stack.Screen name="about" options={{ presentation: "card" }} />
       </Stack>
     </OnboardingGate>
   );

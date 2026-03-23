@@ -239,6 +239,33 @@ export default function DashboardScreen() {
             </Text>
           </View>
         </GlassPanel>
+
+        {/* Mijn Account menu */}
+        <Text style={styles.sectionTitle}>Mijn Account</Text>
+        <GlassPanel style={styles.menuCard}>
+          {[
+            { label: "Instellingen", sub: "Notificaties & voorkeuren", icon: "settings-outline", route: "/settings" },
+            { label: "Help & Support", sub: "FAQ en contactopties", icon: "help-circle-outline", route: "/help" },
+            { label: "Over EchoMatch", sub: "Versie & missie", icon: "information-circle-outline", route: "/about" },
+            { label: "Privacybeleid", sub: "Hoe wij jouw data beschermen", icon: "shield-outline", route: "/privacy" },
+            { label: "Algemene Voorwaarden", sub: "Gebruiksregels & Plus", icon: "document-text-outline", route: "/terms" },
+          ].map((item, i) => (
+            <Pressable
+              key={i}
+              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push(item.route as any); }}
+              style={({ pressed }) => [styles.menuRow, i > 0 && styles.menuRowBorder, pressed && { opacity: 0.7 }]}
+            >
+              <View style={styles.menuIconWrap}>
+                <Ionicons name={item.icon as any} size={18} color="#A855F7" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.menuLabel}>{item.label}</Text>
+                <Text style={styles.menuSub}>{item.sub}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color={COLORS.textMuted} />
+            </Pressable>
+          ))}
+        </GlassPanel>
       </ScrollView>
     </DualGlowBackground>
   );
@@ -356,4 +383,17 @@ const styles = StyleSheet.create({
   },
   gravityTitle: { color: COLORS.silver, fontFamily: "SpaceGrotesk_600SemiBold", fontSize: 13, marginBottom: 4 },
   gravityText: { color: COLORS.textMuted, fontFamily: "Outfit_400Regular", fontSize: 12, lineHeight: 18 },
+  menuCard: { overflow: "hidden", marginBottom: 20 },
+  menuRow: {
+    flexDirection: "row", alignItems: "center", gap: 12,
+    paddingHorizontal: 14, paddingVertical: 13,
+  },
+  menuRowBorder: { borderTopWidth: 1, borderTopColor: "rgba(255,255,255,0.05)" },
+  menuIconWrap: {
+    width: 34, height: 34, borderRadius: 10,
+    backgroundColor: "rgba(168,85,247,0.12)", alignItems: "center", justifyContent: "center",
+    borderWidth: 1, borderColor: "rgba(168,85,247,0.25)",
+  },
+  menuLabel: { color: COLORS.textPrimary, fontFamily: "SpaceGrotesk_600SemiBold", fontSize: 14 },
+  menuSub: { color: COLORS.textMuted, fontFamily: "Outfit_400Regular", fontSize: 11, marginTop: 1 },
 });
