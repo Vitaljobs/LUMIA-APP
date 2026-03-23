@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { dbSelect, dbInsert, dbUpdate, getClient, TABLE_PREFIX } from "../lib/insforge";
+import { dbSelect, dbInsert, dbUpdate, getClient, TABLE_PREFIX, PROJECT_ID } from "../lib/insforge";
 import { LUMIA_MIGRATIONS_SQL } from "../lib/migrations";
 import { logger } from "../lib/logger";
 
@@ -7,7 +7,6 @@ const router = Router();
 
 // ─── Setup / Migration ─────────────────────────────────────────────────────
 
-// GET /lumia/setup/status — check which tables exist
 router.get("/lumia/setup/status", async (_req, res) => {
   const tables = [
     "meters", "xp_log", "statements", "statement_votes",
@@ -28,46 +27,38 @@ router.get("/lumia/setup/status", async (_req, res) => {
   res.json({ ready: allReady, tables: status, sql: allReady ? undefined : LUMIA_MIGRATIONS_SQL });
 });
 
-// POST /lumia/setup/migrate — attempt auto-migration via Insforge RPC
-router.post("/lumia/setup/migrate", async (_req, res) => {
-  try {
-    const client = getClient();
-    // Attempt to call a raw SQL execution RPC function if available
-    const { data, error } = await (client.database as any)
-      .from(`rpc/exec_sql`)
-      .insert([{ sql: LUMIA_MIGRATIONS_SQL }]);
-
-    if (error) {
-      // RPC not available — return the SQL for manual execution
-      return res.status(422).json({
-        success: false,
-        message: "Automatische migratie niet beschikbaar. Voer de SQL handmatig uit in het Insforge dashboard.",
-        sql: LUMIA_MIGRATIONS_SQL,
-      });
-    }
-
-    res.json({ success: true, data });
-  } catch (err) {
-    res.status(422).json({
-      success: false,
-      message: "Voer de SQL handmatig uit in het Insforge dashboard.",
-      sql: LUMIA_MIGRATIONS_SQL,
-    });
-  }
-});
-
 // ─── Meters ────────────────────────────────────────────────────────────────
 
 router.get("/lumia/meters/:userId", async (req, res) => {
   try {
     const rows = await dbSelect("meters", { user_id: req.params.userId });
     if (rows.length === 0) {
-      return res.json({ user_id: req.params.userId, project_id: "LUMIA_2026", honor: 50, reflectie: 10, vitality: 50, decay: 5 });
+      return res.json({ user_id: req.params.userId, project_id: PROJECT_ID, honor: 76, reflectie: 13, vitality: 91, decay: 3 });
     }
     res.json(rows[0]);
   } catch (err) {
     logger.error(err, "lumia/meters GET");
     res.status(500).json({ error: String(err) });
+  }
+});
+
+// Upsert meters
+router.post("/lumia/meters/:userId/upsert", async (req, res) => {
+  try {
+    const client = getClient();
+    const { data, error } = await client.database
+      .from(`${TABLE_PREFIX}meters`)
+      .upsert([{ ...req.body, user_id: req.params.userId, project_id: PROJECT_ID }]);
+    if (error) throw error;
+    res.json(data?.[0] ?? req.body);
+  } catch (err) {
+    // Fallback: try insert
+    try {
+      const rows = await dbInsert("meters", { ...req.body, user_id: req.params.userId });
+      res.json(rows[0] ?? {});
+    } catch (e2) {
+      res.status(500).json({ error: String(e2) });
+    }
   }
 });
 
@@ -85,10 +76,26 @@ router.get("/lumia/statements", async (_req, res) => {
 
 router.post("/lumia/statements", async (req, res) => {
   try {
-    const rows = await dbInsert("statements", { ...req.body, votes_0: 0, votes_1: 0, votes_2: 0 });
+    const body = req.body;
+    const rows = await dbInsert("statements", {
+      ...body,
+      votes_0: body.votes_0 ?? 0,
+      votes_1: body.votes_1 ?? 0,
+      votes_2: body.votes_2 ?? 0,
+    });
     res.status(201).json(rows[0] ?? req.body);
   } catch (err) {
     logger.error(err, "lumia/statements POST");
+    res.status(500).json({ error: String(err) });
+  }
+});
+
+router.patch("/lumia/statements/:id", async (req, res) => {
+  try {
+    await dbUpdate("statements", req.params.id, req.body);
+    res.json({ success: true });
+  } catch (err) {
+    logger.error(err, "lumia/statements PATCH");
     res.status(500).json({ error: String(err) });
   }
 });
@@ -137,6 +144,16 @@ router.get("/lumia/notifications/:userId", async (req, res) => {
   }
 });
 
+router.post("/lumia/notifications/:userId", async (req, res) => {
+  try {
+    const rows = await dbInsert("notifications", { ...req.body, user_id: req.params.userId, read: false });
+    res.status(201).json(rows[0] ?? {});
+  } catch (err) {
+    logger.error(err, "lumia/notifications POST");
+    res.status(500).json({ error: String(err) });
+  }
+});
+
 router.patch("/lumia/notifications/:userId/:notifId/read", async (req, res) => {
   try {
     await dbUpdate("notifications", req.params.notifId, { read: true });
@@ -147,7 +164,7 @@ router.patch("/lumia/notifications/:userId/:notifId/read", async (req, res) => {
   }
 });
 
-// ─── Friends & Messages ───────────────────────────────────────────────────
+// ─── Friends ──────────────────────────────────────────────────────────────
 
 router.get("/lumia/friends/:userId", async (req, res) => {
   try {
@@ -158,6 +175,18 @@ router.get("/lumia/friends/:userId", async (req, res) => {
     res.status(500).json({ error: String(err) });
   }
 });
+
+router.post("/lumia/friends/:userId", async (req, res) => {
+  try {
+    const rows = await dbInsert("friends", { ...req.body, user_id: req.params.userId });
+    res.status(201).json(rows[0] ?? {});
+  } catch (err) {
+    logger.error(err, "lumia/friends POST");
+    res.status(500).json({ error: String(err) });
+  }
+});
+
+// ─── Messages ─────────────────────────────────────────────────────────────
 
 router.get("/lumia/messages/:chatId", async (req, res) => {
   try {
