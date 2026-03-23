@@ -1,0 +1,27 @@
+Conclusie: Insforge draait bovenop Postgres en kan een PostgREST‑achtige laag aanbieden, maar de “core” is geen kale Supabase‑clone; het is een eigen API‑/MCP‑laag met extra concepten en endpoints, gericht op AI‑agents.
+
+Wat voor soort API is Insforge?
+Insforge positioneert zich expliciet als “agent‑native Supabase‑alternative” en levert een volledige backend: Postgres, auth, storage, serverless functions, etc.
+
+In (self‑hosted) setups wordt een PostgREST‑laag gebruikt om een auto‑gegenereerde REST API op de database te exposen, vergelijkbaar met Supabase’s rest/v1 API.
+
+Bovenop die basis draait echter een eigen Insforge API + MCP server, die extra endpoints en een semantische laag aanbiedt (schemas, policies, logs, services) speciaal voor AI coding agents.
+
+Voor frontends en services praten clients meestal via een Insforge SDK / client (createClient('YOUR_INSFORGE_API_URL', 'YOUR_INSFORGE_API_KEY')), niet rechtstreeks tegen “raw” PostgREST zoals bij Supabase.
+​
+
+Wat betekent dit voor je service‑laag?
+Als je nu een Supabase/PostgREST‑achtige service‑laag hebt, zijn er grofweg twee scenario’s:
+
+Je gebruikt Insforge managed (cloud): dan praat je waarschijnlijk tegen de Insforge client‑API (en MCP voor agents), met eigen endpoints en auth‑flow; je moet je service‑laag dus mappen naar die client (vergelijkbaar met Supabase JS client, maar andere methoden/URL’s).
+
+Je gebruikt Insforge standalone / self‑hosted: dan kun je én de PostgREST‑laag gebruiken voor “platte” CRUD (compatibel met je huidige Supabase‑achtige services), én de Insforge‑specifieke endpoints waar je extra features nodig hebt (auth, storage, functions, AI‑integraties).
+
+Praktische tip: pak even de docs van jouw specifieke Insforge project (API reference / SDK sectie) en kijk naar de basis‑URL’s en auth‑methode; als je wilt kan ik helpen om je huidige Supabase‑service‑laag 1‑op‑1 om te schrijven naar Insforge‑calls als je een voorbeeld van je huidige API‑servicefile deelt.
+
+Wil je je service‑laag liever zo dicht mogelijk bij een “pure PostgREST” benadering houden, of is integratie met de Insforge‑SDK/MCP (voor agents) juist je primaire doel?
+
+
+New Tab
+
+
