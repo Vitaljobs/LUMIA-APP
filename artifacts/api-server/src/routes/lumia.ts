@@ -208,4 +208,24 @@ router.post("/lumia/messages", async (req, res) => {
   }
 });
 
+// ─── Temporary GitHub Push ───────────────────────────────────────────────────
+router.post("/lumia/github-push", async (_req, res) => {
+  const { execSync } = await import("child_process");
+  const token = process.env.GITHUB_TOKEN || "";
+  const prefix = token.slice(0, 6);
+  if (!token.startsWith("ghp_")) {
+    return res.json({ ok: false, prefix, msg: "Token is not classic (ghp_)" });
+  }
+  try {
+    const url = `https://Vitaljobs:${token}@github.com/Vitaljobs/LUMIA-APP.git`;
+    const out = execSync(
+      `GIT_ASKPASS="" GIT_TERMINAL_PROMPT=0 git push "${url}" master:main 2>&1`,
+      { cwd: "/home/runner/workspace", env: { ...process.env, GIT_ASKPASS: "", GIT_TERMINAL_PROMPT: "0" } }
+    ).toString();
+    res.json({ ok: true, output: out });
+  } catch (err: any) {
+    res.json({ ok: false, output: err.stdout?.toString() || err.message });
+  }
+});
+
 export default router;
