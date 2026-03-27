@@ -21,8 +21,8 @@ const PURPLE_BORDER = "rgba(168,85,247,0.25)";
 
 const FAQ = [
   {
-    q: "Wat is EchoMatch?",
-    a: "EchoMatch is een Elite Trust Platform waar jouw betrouwbaarheid wordt gemeten via 4 Trust Meters: Honor, Reflectie, Vitality en Decay. Samen vormen ze jouw persoonlijke Trust Score.",
+    q: "Wat is Lumia?",
+    a: "Lumia is een Elite Trust Platform waar jouw betrouwbaarheid wordt gemeten via 4 Trust Meters: Honor, Reflectie, Vitality en Decay. Samen vormen ze jouw persoonlijke Trust Score.",
   },
   {
     q: "Hoe verdien ik XP?",
@@ -95,7 +95,7 @@ export default function HelpScreen() {
             <Text style={styles.contactSub}>Ons team reageert binnen 24 uur</Text>
           </View>
           <Pressable
-            onPress={() => Linking.openURL("mailto:support@echomatch.nl?subject=Support%20aanvraag")}
+            onPress={() => Linking.openURL("mailto:support@lumia.nl?subject=Support%20aanvraag")}
             style={styles.contactBtn}
           >
             <Text style={styles.contactBtnText}>Stuur bericht</Text>
@@ -132,7 +132,7 @@ export default function HelpScreen() {
         <GlassPanel style={styles.guidelinesCard}>
           <View style={styles.guidelinesHeader}>
             <Ionicons name="shield-checkmark" size={18} color={PURPLE} />
-            <Text style={styles.guidelinesTitle}>Gedragscode EchoMatch</Text>
+            <Text style={styles.guidelinesTitle}>Gedragscode Lumia</Text>
           </View>
           {GUIDELINES.map((g, i) => (
             <View key={i} style={styles.guidelineRow}>
@@ -150,7 +150,7 @@ export default function HelpScreen() {
           {[
             { label: "Privacybeleid", onPress: () => router.push("/privacy") },
             { label: "Algemene Voorwaarden", onPress: () => router.push("/terms") },
-            { label: "Over EchoMatch", onPress: () => router.push("/about") },
+            { label: "Over Lumia", onPress: () => router.push("/about") },
           ].map((link, i) => (
             <Pressable
               key={i}

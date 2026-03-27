@@ -22,7 +22,7 @@ const SECTIONS = [
   {
     icon: "shield-checkmark-outline",
     title: "Welke gegevens verzamelen wij?",
-    body: `EchoMatch verzamelt de volgende categorieën persoonsgegevens:
+    body: `Lumia verzamelt de volgende categorieën persoonsgegevens:
 
 • Profielinformatie: gebruikersnaam, avatar en niveau
 • Trust Meter scores: Honor, Reflectie, Vitality en Decay
@@ -48,7 +48,7 @@ Wij verkopen jouw gegevens nooit aan derden. Gegevens worden niet gebruikt voor 
   {
     icon: "eye-off-outline",
     title: "Anonimiteit & Privacy",
-    body: `EchoMatch biedt de volgende anonimiteitsfuncties:
+    body: `Lumia biedt de volgende anonimiteitsfuncties:
 
 • Anonieme stellingen: je kunt stellingen plaatsen zonder dat jouw naam zichtbaar is voor andere gebruikers
 • Trust-Gravity blijft actief bij anonieme deelname
@@ -89,9 +89,9 @@ Na verwijdering is herstel niet mogelijk.`,
     body: `Op grond van de Algemene Verordening Gegevensbescherming (AVG) heb je het recht op inzage, rectificatie en verwijdering van jouw persoonsgegevens.
 
 Voor vragen over jouw privacy of het uitoefenen van jouw rechten:
-privacy@echomatch.nl
+privacy@lumia.nl
 
-EchoMatch is geregistreerd bij de Autoriteit Persoonsgegevens (AP).
+Lumia is geregistreerd bij de Autoriteit Persoonsgegevens (AP).
 
 Laatst bijgewerkt: januari 2026`,
   },
@@ -117,7 +117,7 @@ export default function PrivacyScreen() {
           </View>
           <View>
             <Text style={styles.title}>Privacybeleid</Text>
-            <Text style={styles.sub}>EchoMatch · Versie januari 2026</Text>
+            <Text style={styles.sub}>Lumia · Versie januari 2026</Text>
           </View>
         </View>
 
@@ -125,7 +125,7 @@ export default function PrivacyScreen() {
         <GlassPanel style={[styles.introBanner, { borderColor: PURPLE_BORDER }]}>
           <Ionicons name="lock-closed" size={18} color={PURPLE} />
           <Text style={styles.introText}>
-            EchoMatch neemt jouw privacy serieus. Wij verwerken zo min mogelijk gegevens en alleen voor de doeleinden beschreven in dit beleid.
+            Lumia neemt jouw privacy serieus. Wij verwerken zo min mogelijk gegevens en alleen voor de doeleinden beschreven in dit beleid.
           </Text>
         </GlassPanel>
 

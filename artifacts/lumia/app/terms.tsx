@@ -22,9 +22,9 @@ const ARTICLES = [
   {
     nr: "1",
     title: "Gebruik van de App",
-    body: `EchoMatch is een platform voor het meten en verbeteren van vertrouwen in sociale netwerken. Door gebruik te maken van de app ga je akkoord met deze voorwaarden.
+    body: `Lumia is een platform voor het meten en verbeteren van vertrouwen in sociale netwerken. Door gebruik te maken van de app ga je akkoord met deze voorwaarden.
 
-Je dient minimaal 16 jaar oud te zijn om gebruik te maken van EchoMatch. Gebruik van de app is strikt persoonlijk en niet overdraagbaar. Het is niet toegestaan de app te gebruiken voor commerciële doeleinden zonder schriftelijke toestemming.`,
+Je dient minimaal 16 jaar oud te zijn om gebruik te maken van Lumia. Gebruik van de app is strikt persoonlijk en niet overdraagbaar. Het is niet toegestaan de app te gebruiken voor commerciële doeleinden zonder schriftelijke toestemming.`,
   },
   {
     nr: "2",
@@ -36,12 +36,12 @@ Je dient minimaal 16 jaar oud te zijn om gebruik te maken van EchoMatch. Gebruik
 • Automatische tools of bots te gebruiken om XP te verzamelen
 • Toegang te verkrijgen tot accounts van andere gebruikers
 
-Bij overtreding behoudt EchoMatch het recht jouw account te schorsen of permanent te verwijderen.`,
+Bij overtreding behoudt Lumia het recht jouw account te schorsen of permanent te verwijderen.`,
   },
   {
     nr: "3",
     title: "Gedragsregels",
-    body: `EchoMatch streeft naar een respectvolle gemeenschap. Het is verboden:
+    body: `Lumia streeft naar een respectvolle gemeenschap. Het is verboden:
 
 • Beledigend, discriminerend of haatdragend gedrag te vertonen
 • Andere gebruikers te intimideren of te stalken
@@ -54,7 +54,7 @@ Overtredingen worden gesanctioneerd via verlaging van de Trust Score, tijdelijke
   {
     nr: "4",
     title: "XP-systeem & Trust Meters",
-    body: `Het XP-systeem en de Trust Meters zijn bedoeld als gamificatie-element ter bevordering van eerlijk gedrag. EchoMatch behoudt het recht om:
+    body: `Het XP-systeem en de Trust Meters zijn bedoeld als gamificatie-element ter bevordering van eerlijk gedrag. Lumia behoudt het recht om:
 
 • De berekening van Trust Scores en XP-waarden aan te passen
 • XP te corrigeren of in te trekken bij geconstateerd misbruik
@@ -65,7 +65,7 @@ XP en Trust Meters hebben geen monetaire waarde en zijn niet verhandelbaar of ov
   {
     nr: "5",
     title: "Plus-abonnement",
-    body: `EchoMatch biedt een optioneel Plus-abonnement met uitgebreide functies. Voor het Plus-abonnement gelden aanvullende voorwaarden:
+    body: `Lumia biedt een optioneel Plus-abonnement met uitgebreide functies. Voor het Plus-abonnement gelden aanvullende voorwaarden:
 
 • Betaling via de App Store of Google Play
 • Automatische verlenging tenzij opgezegd vóór het einde van de periode
@@ -77,34 +77,34 @@ Prijzen zijn inclusief BTW en kunnen jaarlijks worden aangepast.`,
   {
     nr: "6",
     title: "Intellectueel Eigendom",
-    body: `Alle content op het EchoMatch-platform, inclusief het Trust-systeem, design en technologie, is eigendom van EchoMatch. Het is verboden om:
+    body: `Alle content op het Lumia-platform, inclusief het Trust-systeem, design en technologie, is eigendom van Lumia. Het is verboden om:
 
 • Content te kopiëren, reproduceren of distribueren zonder toestemming
 • De broncode van de app te reverse-engineeren
 • Merknamen, logo's of interface-elementen te gebruiken
 
-Door content te plaatsen op EchoMatch verleen je ons een niet-exclusieve licentie om deze content te tonen op het platform.`,
+Door content te plaatsen op Lumia verleen je ons een niet-exclusieve licentie om deze content te tonen op het platform.`,
   },
   {
     nr: "7",
     title: "Aansprakelijkheid & Disclaimer",
-    body: `EchoMatch is niet aansprakelijk voor:
+    body: `Lumia is niet aansprakelijk voor:
 
 • Schade als gevolg van gebruik of niet-gebruik van de app
 • Verlies van XP of Trust Score data door technische storingen
 • Acties van andere gebruikers op het platform
 • Tijdelijke onbeschikbaarheid van de service
 
-De app wordt aangeboden "as is". EchoMatch garandeert geen ononderbroken beschikbaarheid.`,
+De app wordt aangeboden "as is". Lumia garandeert geen ononderbroken beschikbaarheid.`,
   },
   {
     nr: "8",
     title: "Wijzigingen & Toepasselijk Recht",
-    body: `EchoMatch behoudt het recht deze voorwaarden te wijzigen. Wijzigingen worden 30 dagen van tevoren aangekondigd via de app.
+    body: `Lumia behoudt het recht deze voorwaarden te wijzigen. Wijzigingen worden 30 dagen van tevoren aangekondigd via de app.
 
 Op deze voorwaarden is Nederlands recht van toepassing. Geschillen worden voorgelegd aan de bevoegde rechter in Amsterdam.
 
-Versie: januari 2026 | EchoMatch B.V. | Amsterdam, Nederland`,
+Versie: januari 2026 | Lumia B.V. | Amsterdam, Nederland`,
   },
 ];
 
@@ -128,7 +128,7 @@ export default function TermsScreen() {
           </View>
           <View>
             <Text style={styles.title}>Algemene Voorwaarden</Text>
-            <Text style={styles.sub}>EchoMatch · Januari 2026</Text>
+            <Text style={styles.sub}>Lumia · Januari 2026</Text>
           </View>
         </View>
 
@@ -136,7 +136,7 @@ export default function TermsScreen() {
         <GlassPanel style={[styles.introBanner, { borderColor: PURPLE_BORDER }]}>
           <Ionicons name="information-circle" size={18} color={PURPLE} />
           <Text style={styles.introText}>
-            Door EchoMatch te gebruiken ga je akkoord met deze algemene voorwaarden. Lees ze zorgvuldig door.
+            Door Lumia te gebruiken ga je akkoord met deze algemene voorwaarden. Lees ze zorgvuldig door.
           </Text>
         </GlassPanel>
 

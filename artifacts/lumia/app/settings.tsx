@@ -143,7 +143,7 @@ export default function SettingsScreen() {
             { label: "Privacybeleid", icon: "shield-outline", onPress: () => router.push("/privacy") },
             { label: "Algemene Voorwaarden", icon: "document-text-outline", onPress: () => router.push("/terms") },
             { label: "Help & Support", icon: "help-circle-outline", onPress: () => router.push("/help") },
-            { label: "Over EchoMatch", icon: "information-circle-outline", onPress: () => router.push("/about") },
+            { label: "Over Lumia", icon: "information-circle-outline", onPress: () => router.push("/about") },
           ].map((link, i) => (
             <Pressable
               key={i}

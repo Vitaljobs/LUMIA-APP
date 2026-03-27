@@ -31,9 +31,9 @@ const FEATURES = [
 ];
 
 const TEAM = [
-  { role: "Concept & Design", name: "EchoMatch Studio" },
+  { role: "Concept & Design", name: "Lumia Studio" },
   { role: "Platform Architect", name: "Trust Systems Lab" },
-  { role: "Community Lead", name: "EchoMatch Team" },
+  { role: "Community Lead", name: "Lumia Team" },
 ];
 
 export default function AboutScreen() {
@@ -55,7 +55,7 @@ export default function AboutScreen() {
             <Ionicons name="information-circle" size={22} color={PURPLE} />
           </View>
           <View>
-            <Text style={styles.title}>Over EchoMatch</Text>
+            <Text style={styles.title}>Over Lumia</Text>
             <Text style={styles.sub}>Versie {APP_VERSION}</Text>
           </View>
         </View>
@@ -65,7 +65,7 @@ export default function AboutScreen() {
           <View style={styles.logoWrap}>
             <Ionicons name="shield-checkmark" size={40} color={PURPLE} />
           </View>
-          <Text style={styles.brandName}>EchoMatch</Text>
+          <Text style={styles.brandName}>Lumia</Text>
           <Text style={styles.brandTagline}>Het Elite Trust Platform</Text>
           <View style={styles.versionRow}>
             <View style={styles.versionBadge}>
@@ -81,7 +81,7 @@ export default function AboutScreen() {
         <GlassPanel style={styles.missionCard}>
           <Text style={styles.missionLabel}>Onze Missie</Text>
           <Text style={styles.missionText}>
-            EchoMatch gelooft dat eerlijkheid en betrouwbaarheid de basis vormen van betekenisvolle verbindingen. Ons platform maakt vertrouwen meetbaar, zichtbaar en groeiend — zodat jij weet met wie je te maken hebt en anderen weten wie jij bent.
+            Lumia gelooft dat eerlijkheid en betrouwbaarheid de basis vormen van betekenisvolle verbindingen. Ons platform maakt vertrouwen meetbaar, zichtbaar en groeiend — zodat jij weet met wie je te maken hebt en anderen weten wie jij bent.
           </Text>
           <Text style={styles.missionText}>
             Via de 4 Trust Meters — Honor, Reflectie, Vitality en Decay — krijg je inzicht in jouw eigen gedragspatronen en die van je netwerk. Trust-Gravity zorgt ervoor dat eerlijkheid wordt beloond: hoe hoger jouw Honor, hoe zwaarder jouw stem telt.
@@ -135,7 +135,7 @@ export default function AboutScreen() {
           ))}
         </GlassPanel>
 
-        <Text style={styles.copyright}>© 2026 EchoMatch B.V. · Amsterdam, Nederland</Text>
+        <Text style={styles.copyright}>© 2026 Lumia B.V. · Amsterdam, Nederland</Text>
       </ScrollView>
     </DualGlowBackground>
   );

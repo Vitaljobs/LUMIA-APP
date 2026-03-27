@@ -246,7 +246,7 @@ export default function DashboardScreen() {
           {[
             { label: "Instellingen", sub: "Notificaties & voorkeuren", icon: "settings-outline", route: "/settings" },
             { label: "Help & Support", sub: "FAQ en contactopties", icon: "help-circle-outline", route: "/help" },
-            { label: "Over EchoMatch", sub: "Versie & missie", icon: "information-circle-outline", route: "/about" },
+            { label: "Over Lumia", sub: "Versie & missie", icon: "information-circle-outline", route: "/about" },
             { label: "Privacybeleid", sub: "Hoe wij jouw data beschermen", icon: "shield-outline", route: "/privacy" },
             { label: "Algemene Voorwaarden", sub: "Gebruiksregels & Plus", icon: "document-text-outline", route: "/terms" },
           ].map((item, i) => (
