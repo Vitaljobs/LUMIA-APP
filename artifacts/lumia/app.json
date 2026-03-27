@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "Lumia 2026",
+    "name": "Lumia",
     "slug": "lumia",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "lumia",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/splash-icon.png",
@@ -14,9 +14,27 @@
       "backgroundColor": "#0a0a0a"
     },
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "nl.lumia.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSUserNotificationsUsageDescription": "Lumia stuurt je meldingen over XP, Trust Score updates en activiteiten van vrienden.",
+        "NSFaceIDUsageDescription": "Gebruik Face ID om snel en veilig in te loggen.",
+        "UIBackgroundModes": ["fetch", "remote-notification"]
+      }
     },
-    "android": {},
+    "android": {
+      "package": "nl.lumia.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#0a0a0a"
+      },
+      "permissions": [
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE"
+      ]
+    },
     "web": {
       "favicon": "./assets/images/icon.png"
     },
@@ -33,6 +51,11 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "lumia-2026"
+      }
     }
   }
 }
