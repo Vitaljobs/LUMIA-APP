@@ -1,10 +1,14 @@
 # Lumia 2026 — Elite Trust Platform
 
+<p align="center">
+  <img src="preview.png" width="320" alt="Lumia 2026 app preview" />
+</p>
+
 Een mobiele app gebouwd met Expo React Native die vertrouwen meet en visualiseert via 4 Trust Meters.
 
 ## Over de app
 
-Lumia 2026 (ook bekend als EchoMatch) is een Elite Trust Platform waarbij gebruikers hun betrouwbaarheid opbouwen via vier dimensies:
+Lumia 2026 is een Elite Trust Platform waarbij gebruikers hun betrouwbaarheid opbouwen via vier dimensies:
 
 - **Honor** — Eerlijkheid en integriteit
 - **Reflectie** — Zelfbewustzijn en groei
